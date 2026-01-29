@@ -388,65 +388,114 @@ const MobileFilterDrawer = ({ uniqueCategories, selectedCategory, setSelectedCat
 );
 
 // Product Card Component
-const ProductCard = ({ product, index, goToDetail, formatPrice }: any) => (
-    <div
-        onClick={() => goToDetail(product.id)}
-        className="group cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-[#E6B8A2]"
-    >
-        <div className="relative h-64 min-h-[16rem] overflow-hidden bg-gradient-to-br from-[#DCD7D5] to-[#E3DEDC] flex items-center justify-center p-4">
-            <div className="w-full h-full flex items-center justify-center">
-                <img
-                    src={product.images[0]}
-                    alt={product.title}
-                    className="w-auto h-auto max-w-full max-h-full object-cover rounded-lg group-hover:scale-105 transition-transform duration-500"
-                />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#5D4037]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-            {/* Bestseller Badge - Show for first 3 products */}
-            {index < 3 && (
-                <div className="absolute top-3 left-3 bg-gradient-to-r from-[#8B5A3C] to-[#6D4C41] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 z-10">
-                    <Sparkles className="w-3 h-3" />
-                    <span>Bestseller</span>
+const ProductCard = ({ product, index, goToDetail, formatPrice }: any) => {
+    // Check if product is out of stock (all variants unavailable)
+    const isOutOfStock = product.availableForSale === false;
+    return (
+        <div
+            onClick={() => !isOutOfStock && goToDetail(product.id)}
+            className={`group rounded-2xl overflow-hidden shadow-lg transition-all duration-300 border-2 ${isOutOfStock
+                ? 'bg-gray-100 cursor-not-allowed opacity-75 border-gray-300'
+                : 'bg-white cursor-pointer hover:shadow-2xl border-transparent hover:border-[#E6B8A2]'
+                }`}
+        >
+            <div className={`relative h-64 min-h-[16rem] overflow-hidden flex items-center justify-center p-4 ${isOutOfStock
+                ? 'bg-gradient-to-br from-gray-200 to-gray-300'
+                : 'bg-gradient-to-br from-[#DCD7D5] to-[#E3DEDC]'
+                }`}>
+                <div className="w-full h-full flex items-center justify-center">
+                    <img
+                        src={product.images[0]}
+                        alt={product.title}
+                        className={`w-auto h-auto max-w-full max-h-full object-cover rounded-lg transition-transform duration-500 ${isOutOfStock
+                            ? 'grayscale opacity-60'
+                            : 'group-hover:scale-105'
+                            }`}
+                    />
                 </div>
-            )}
 
-            {/* Heart Icon - Top Right */}
-            <div className="absolute top-3 right-3 w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-[#E6B8A2] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                <Heart className="w-4 h-4 text-[#8B5A3C] group-hover:fill-[#8B5A3C] transition-all" />
+                {!isOutOfStock && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#5D4037]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                )}
+
+                {/* Out of Stock Badge */}
+                {isOutOfStock && (
+                    <div className="absolute top-3 left-3 bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 z-10">
+                        <Package className="w-3 h-3" />
+                        <span>Out of Stock</span>
+                    </div>
+                )}
+
+                {/* Bestseller Badge - Show for first 3 products only if in stock */}
+                {!isOutOfStock && index < 3 && (
+                    <div className="absolute top-3 left-3 bg-gradient-to-r from-[#8B5A3C] to-[#6D4C41] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 z-10">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Bestseller</span>
+                    </div>
+                )}
+
+                {/* Heart Icon - Top Right - Only show if in stock */}
+                {!isOutOfStock && (
+                    <div className="absolute top-3 right-3 w-8 h-8 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-[#E6B8A2] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                        <Heart className="w-4 h-4 text-[#8B5A3C] group-hover:fill-[#8B5A3C] transition-all" />
+                    </div>
+                )}
+
+                {/* Price Badge */}
+                <div className={`absolute bottom-3 left-3 rounded-xl px-3 py-2 shadow-xl z-10 ${isOutOfStock
+                    ? 'bg-gray-300/95 backdrop-blur-sm border border-gray-400'
+                    : 'bg-white/95 backdrop-blur-sm border border-[#D4A798]'
+                    }`}>
+                    <div className="flex flex-col">
+                        <span className={`text-xs line-through leading-tight ${isOutOfStock ? 'text-gray-500' : 'text-[#8B5A3C]'
+                            }`}>
+                            {formatPrice(product.price + 10)}
+                        </span>
+                        <span className={`text-lg font-black leading-tight ${isOutOfStock
+                            ? 'text-gray-600'
+                            : 'bg-gradient-to-r from-[#8B5A3C] to-[#6D4C41] bg-clip-text text-transparent'
+                            }`}>
+                            {formatPrice(product.price)}
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            {/* Price Badge */}
-            <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-xl border border-[#D4A798] z-10">
-                <div className="flex flex-col">
-                    <span className="text-xs text-[#8B5A3C] line-through leading-tight">
-                        {formatPrice(product.price + 10)}
-                    </span>
-                    <span className="text-lg font-black bg-gradient-to-r from-[#8B5A3C] to-[#6D4C41] bg-clip-text text-transparent leading-tight">
-                        {formatPrice(product.price)}
-                    </span>
-                </div>
+            <div className="p-4">
+                {product.category && (
+                    <div className="flex items-center gap-1.5 mb-2">
+                        <PawPrint className={`w-3.5 h-3.5 flex-shrink-0 ${isOutOfStock ? 'text-gray-400' : 'text-[#8B5A3C]'
+                            }`} />
+                        <span className={`text-xs sm:text-sm font-semibold truncate ${isOutOfStock ? 'text-gray-500' : 'text-[#6D4C41]'
+                            }`}>
+                            {product.category}
+                        </span>
+                    </div>
+                )}
+                <h3 className={`text-base md:text-lg font-bold transition-colors line-clamp-2 leading-tight mb-2 min-h-[2.5rem] ${isOutOfStock
+                    ? 'text-gray-600'
+                    : 'text-[#5D4037] group-hover:text-[#8B5A3C]'
+                    }`} style={{ fontFamily: 'Georgia, serif' }}>
+                    {product.title}
+                </h3>
+                <p className={`text-sm line-clamp-2 mb-3 ${isOutOfStock ? 'text-gray-500' : 'text-[#6D4C41]'
+                    }`}>
+                    {product.description}
+                </p>
+                <button
+                    disabled={isOutOfStock}
+                    className={`w-full font-bold text-sm py-2.5 rounded-lg transition-all duration-300 border-2 shadow-sm flex items-center justify-center gap-2 ${isOutOfStock
+                        ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-[#F5EDE4] to-[#F8F4ED] group-hover:from-[#D4A798] group-hover:to-[#C19A8B] text-[#5D4037] group-hover:text-white border-[#E6B8A2] group-hover:border-transparent group-hover:shadow-md'
+                        }`}
+                >
+                    <ShoppingBag className="w-4 h-4" />
+                    <span>{isOutOfStock ? 'Out of Stock' : 'View Product'}</span>
+                </button>
             </div>
         </div>
-
-        <div className="p-4">
-            {product.category && (
-                <div className="flex items-center gap-1.5 mb-2">
-                    <PawPrint className="w-3.5 h-3.5 text-[#8B5A3C] flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-[#6D4C41] font-semibold truncate">{product.category}</span>
-                </div>
-            )}
-            <h3 className="text-base md:text-lg font-bold text-[#5D4037] group-hover:text-[#8B5A3C] transition-colors line-clamp-2 leading-tight mb-2 min-h-[2.5rem]" style={{ fontFamily: 'Georgia, serif' }}>
-                {product.title}
-            </h3>
-            <p className="text-sm text-[#6D4C41] line-clamp-2 mb-3">{product.description}</p>
-            <button className="w-full bg-gradient-to-r from-[#F5EDE4] to-[#F8F4ED] group-hover:from-[#D4A798] group-hover:to-[#C19A8B] text-[#5D4037] group-hover:text-white font-bold text-sm py-2.5 rounded-lg transition-all duration-300 border-2 border-[#E6B8A2] group-hover:border-transparent shadow-sm group-hover:shadow-md flex items-center justify-center gap-2">
-                <ShoppingBag className="w-4 h-4" />
-                <span>View Product</span>
-            </button>
-        </div>
-    </div>
-);
+    );
+};
 
 // Empty State
 const EmptyState = ({ clearFilters }: any) => (

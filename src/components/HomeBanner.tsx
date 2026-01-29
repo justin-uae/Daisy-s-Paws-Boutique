@@ -1,15 +1,70 @@
-import { PawPrint, Package } from 'lucide-react';
+import { PawPrint, Package, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Banner from '../assets/Banner.png'
+import { useState, useEffect } from 'react';
+import { fetchBannerImages } from '../services/shopifyService';
+import Banner2 from '../assets/Banner2.png'
+import Banner3 from '../assets/Banner3.png'
+import Banner4 from '../assets/Banner4.png'
 import PawsAnimated from './Skeletons/PawsAnimated';
+
+// Fallback images if Shopify fetch fails
+const FALLBACK_IMAGES = [Banner2, Banner3, Banner4];
 
 export default function HomepageBanner() {
     const navigate = useNavigate();
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const [bannerImages, setBannerImages] = useState<string[]>(FALLBACK_IMAGES);
+    const [loading, setLoading] = useState(true);
+
+    // Fetch banner images from Shopify collection
+    useEffect(() => {
+        const loadBannerImages = async () => {
+            try {
+                setLoading(true);
+                const images = await fetchBannerImages('frontpage');
+
+                if (images && images.length > 0) {
+                    setBannerImages(images);
+                } else {
+                    setBannerImages(FALLBACK_IMAGES);
+                }
+            } catch (error) {
+                setBannerImages(FALLBACK_IMAGES);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadBannerImages();
+    }, []);
+
+    // Auto-slide every 4 seconds
+    useEffect(() => {
+        if (bannerImages.length <= 1) return; // Don't auto-slide if only 1 image
+
+        const timer = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
+        }, 4000);
+
+        return () => clearInterval(timer);
+    }, [bannerImages.length]);
+
+    const nextSlide = () => {
+        setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
+    };
+
+    const prevSlide = () => {
+        setCurrentSlide((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
+    };
+
+    const goToSlide = (index: number) => {
+        setCurrentSlide(index);
+    };
 
     return (
         <>
             <div className="relative">
-                <div className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[30rem] lg:min-h-[35rem] bg-[#ada193] overflow-hidden">
+                <div className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[30rem] lg:min-h-[35rem] bg-[#e1cfbd] overflow-hidden">
                     {/* Banner content container */}
                     <PawsAnimated />
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center py-8 sm:py-12">
@@ -63,7 +118,7 @@ export default function HomepageBanner() {
                                 </div>
                             </div>
 
-                            {/* Right side - Vector image */}
+                            {/* Right side - Image Slider */}
                             <div className="w-full lg:w-[43%] flex justify-center lg:justify-end relative mt-4 lg:mt-0">
                                 <div className="absolute inset-0 flex items-center justify-center opacity-10">
                                     <svg className="w-full h-full text-[#252120]" viewBox="0 0 200 200">
@@ -73,11 +128,69 @@ export default function HomepageBanner() {
                                 </div>
 
                                 <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl relative z-10">
-                                    <img
-                                        src={Banner}
-                                        alt="Dog Fashion Collection"
-                                        className="w-full h-auto object-contain rounded-4xl"
-                                    />
+                                    {/* Slider Container */}
+                                    <div className="relative overflow-hidden rounded-4xl">
+                                        {loading ? (
+                                            // Loading skeleton
+                                            <div className="w-full h-[250px] sm:h-[300px] md:h-[450px] lg:h-[500px] bg-[#DED8D6] animate-pulse rounded-4xl flex items-center justify-center">
+                                                <PawPrint className="w-16 h-16 text-[#A79A95] opacity-40" />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {/* Images */}
+                                                <div
+                                                    className="flex transition-transform duration-500 ease-in-out"
+                                                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                                                >
+                                                    {bannerImages.map((image, index) => (
+                                                        <div key={index} className="min-w-full">
+                                                            <img
+                                                                src={image}
+                                                                alt={`Dog Fashion Collection ${index + 1}`}
+                                                                className="w-full h-[250px] sm:h-[300px] md:h-[450px] lg:h-[500px] object-cover"
+                                                                loading={index === 0 ? "eager" : "lazy"}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Navigation Arrows - Only show if more than 1 image */}
+                                                {bannerImages.length > 1 && (
+                                                    <>
+                                                        <button
+                                                            onClick={prevSlide}
+                                                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
+                                                            aria-label="Previous image"
+                                                        >
+                                                            <ChevronLeft className="w-5 h-5 text-[#3B3634]" />
+                                                        </button>
+                                                        <button
+                                                            onClick={nextSlide}
+                                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
+                                                            aria-label="Next image"
+                                                        >
+                                                            <ChevronRight className="w-5 h-5 text-[#3B3634]" />
+                                                        </button>
+
+                                                        {/* Dots Indicator */}
+                                                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                                                            {bannerImages.map((_, index) => (
+                                                                <button
+                                                                    key={index}
+                                                                    onClick={() => goToSlide(index)}
+                                                                    className={`w-2.5 h-2.5 rounded-full transition-all ${currentSlide === index
+                                                                        ? 'bg-[#3B3634] w-6'
+                                                                        : 'bg-white/60 hover:bg-white/80'
+                                                                        }`}
+                                                                    aria-label={`Go to slide ${index + 1}`}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

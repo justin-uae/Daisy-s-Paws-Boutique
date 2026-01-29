@@ -54,7 +54,7 @@ export default function CartPage() {
                     <div className="lg:col-span-2 space-y-3 sm:space-y-4">
                         {cart.map((item) => (
                             <div
-                                key={`${item.variantId}-${item.customAttributes?.date || 'no-date'}`}
+                                key={`${item.variantId}-${item.size || 'no-size'}`}
                                 className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border-2 border-[#DED8D6] hover:border-[#D4A798] transition-all"
                             >
                                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -72,11 +72,19 @@ export default function CartPage() {
                                     {/* Details */}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-2 sm:gap-4 mb-2 sm:mb-3">
-                                            <h3 className="text-base sm:text-lg font-black text-[#5D4037] line-clamp-2">
-                                                {item.title}
-                                            </h3>
+                                            <div>
+                                                <h3 className="text-base sm:text-lg font-black text-[#5D4037] line-clamp-2">
+                                                    {item.title}
+                                                </h3>
+                                                {/* Display Size if available */}
+                                                {item.size && (
+                                                    <p className="text-xs sm:text-sm text-[#8B5A3C] font-bold mt-1">
+                                                        Size: {item.size}
+                                                    </p>
+                                                )}
+                                            </div>
                                             <button
-                                                onClick={() => removeFromCart(item.variantId)}
+                                                onClick={() => removeFromCart(item.variantId, item.size)}
                                                 className="p-1.5 sm:p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600 flex-shrink-0"
                                                 aria-label="Remove item"
                                             >
@@ -84,32 +92,11 @@ export default function CartPage() {
                                             </button>
                                         </div>
 
-                                        {/* Custom Attributes */}
-                                        {item.customAttributes && (
-                                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                                                {item.customAttributes.date && (
-                                                    <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-[#EBEAE9] rounded-full text-[10px] sm:text-xs font-semibold text-[#6D4C41]">
-                                                        📅 {item.customAttributes.date}
-                                                    </span>
-                                                )}
-                                                {item.customAttributes.adults && parseInt(item.customAttributes.adults) > 0 && (
-                                                    <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-[#EBEAE9] rounded-full text-[10px] sm:text-xs font-semibold text-[#6D4C41]">
-                                                        👨 {item.customAttributes.adults} Adults
-                                                    </span>
-                                                )}
-                                                {item.customAttributes.children && parseInt(item.customAttributes.children) > 0 && (
-                                                    <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-[#EBEAE9] rounded-full text-[10px] sm:text-xs font-semibold text-[#6D4C41]">
-                                                        👶 {item.customAttributes.children} Children
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
-
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                             {/* Quantity Controls */}
                                             <div className="flex items-center border-2 border-[#DED8D6] rounded-lg sm:rounded-xl overflow-hidden w-fit">
                                                 <button
-                                                    onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
+                                                    onClick={() => updateQuantity(item.variantId, item.quantity - 1, item.size)}
                                                     className="px-2.5 sm:px-3 py-1.5 sm:py-2 hover:bg-[#EBEAE9] transition-colors"
                                                     disabled={loading}
                                                 >
@@ -119,7 +106,7 @@ export default function CartPage() {
                                                     {item.quantity}
                                                 </span>
                                                 <button
-                                                    onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                                                    onClick={() => updateQuantity(item.variantId, item.quantity + 1, item.size)}
                                                     className="px-2.5 sm:px-3 py-1.5 sm:py-2 hover:bg-[#EBEAE9] transition-colors"
                                                     disabled={loading}
                                                 >

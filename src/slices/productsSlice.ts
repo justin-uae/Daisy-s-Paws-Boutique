@@ -5,6 +5,7 @@ interface Product {
     id: string;
     title: string;
     description: string;
+    availableForSale: any;
     price: number;
     originalPrice: number | null;
     images: string[];
@@ -16,7 +17,14 @@ interface Product {
 
 interface ProductDetail extends Product {
     descriptionHtml: string;
-    variantId: string;
+    howToMeasureImage: any;
+    sizeChartImage: any;
+    variants: Array<{
+        id: string;
+        title: string;
+        price: number;
+        availableForSale: boolean;
+    }>;
 }
 
 interface Collection {

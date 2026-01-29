@@ -21,7 +21,9 @@ export default function PopularProducts() {
     }, [dispatch, products.length]);
 
     // Get first 10 products
-    const displayProducts = products.slice(0, 10);
+    const displayProducts = products
+        .filter(product => product?.availableForSale !== false)
+        .slice(0, 15);
 
     const goToDetail = (productId: string) => {
         // Extract ID from Shopify GID
@@ -112,7 +114,7 @@ export default function PopularProducts() {
                                     <img
                                         src={product.images[0]}
                                         alt={product.title}
-                                        className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                                        className="w-full h-full object-contain object-center group-hover:scale-110 transition-transform duration-500"
                                         loading="lazy"
                                     />
 

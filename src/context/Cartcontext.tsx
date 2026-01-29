@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { createCart, addToCart as addToCartAPI } from '../services/shopifyService';
+import { createCart, replaceCartLines } from '../services/shopifyService';
 
 // Types
 interface CartItem {
@@ -9,12 +9,7 @@ interface CartItem {
   price: number;
   image?: string;
   productId: string;
-  customAttributes?: {
-    date?: string;
-    adults?: string;
-    children?: string;
-    totalGuests?: string;
-  };
+  size?: string;
 }
 
 interface Cart {
@@ -30,8 +25,8 @@ interface CartContextType {
   checkout: Cart | null;
   loading: boolean;
   addToCart: (item: CartItem) => Promise<void>;
-  removeFromCart: (variantId: string) => void;
-  updateQuantity: (variantId: string, quantity: number) => void;
+  removeFromCart: (variantId: string, size?: string) => Promise<void>;
+  updateQuantity: (variantId: string, quantity: number, size?: string) => Promise<void>;
   clearCart: () => void;
   proceedToCheckout: () => void;
 }
@@ -81,27 +76,19 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setLoading(true);
 
     try {
-      // Check if item already exists in cart (same variant and same date)
+      // Check if item already exists in cart (same variant and same size)
       const existingItemIndex = cart.findIndex(
         (cartItem) =>
           cartItem.variantId === item.variantId &&
-          cartItem.customAttributes?.date === item.customAttributes?.date
+          cartItem.size === item.size
       );
 
       let updatedCart: CartItem[];
 
       if (existingItemIndex > -1) {
-        // Update quantity if item exists with same date
+        // Update quantity if item exists with same size
         updatedCart = [...cart];
         updatedCart[existingItemIndex].quantity += item.quantity;
-        updatedCart[existingItemIndex].customAttributes = {
-          ...updatedCart[existingItemIndex].customAttributes,
-          ...item.customAttributes,
-          totalGuests: (
-            parseInt(updatedCart[existingItemIndex].customAttributes?.totalGuests || '0') +
-            parseInt(item.customAttributes?.totalGuests || '0')
-          ).toString(),
-        };
       } else {
         // Add new item
         updatedCart = [...cart, item];
@@ -110,23 +97,27 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       setCart(updatedCart);
 
       // Create or update Shopify cart
-      const lineItems = updatedCart.map((cartItem) => ({
-        merchandiseId: cartItem.variantId,
-        quantity: cartItem.quantity,
-        attributes: cartItem.customAttributes ? [
-          { key: 'Date', value: cartItem.customAttributes.date || '' },
-          { key: 'Adults', value: cartItem.customAttributes.adults || '0' },
-          { key: 'Children', value: cartItem.customAttributes.children || '0' },
-          { key: 'Total Guests', value: cartItem.customAttributes.totalGuests || '0' },
-        ] : [],
-      }));
+      const lineItems = updatedCart.map((cartItem) => {
+        const attributes = [];
+
+        // Add size attribute if present
+        if (cartItem.size) {
+          attributes.push({ key: 'Size', value: cartItem.size });
+        }
+
+        return {
+          merchandiseId: cartItem.variantId,
+          quantity: cartItem.quantity,
+          attributes,
+        };
+      });
 
       let updatedCheckout;
 
       if (checkout?.id) {
-        // Update existing cart
+        // Replace cart lines to avoid duplication
         try {
-          updatedCheckout = await addToCartAPI(checkout.id, lineItems);
+          updatedCheckout = await replaceCartLines(checkout.id, lineItems);
         } catch (error) {
           // If cart doesn't exist or expired, create new one
           console.log('Cart expired, creating new cart');
@@ -155,27 +146,114 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Remove item from cart
-  const removeFromCart = (variantId: string): void => {
-    const updatedCart = cart.filter((item) => item.variantId !== variantId);
-    setCart(updatedCart);
+  const removeFromCart = async (variantId: string, size?: string): Promise<void> => {
+    setLoading(true);
 
-    // If cart is empty, clear checkout
-    if (updatedCart.length === 0) {
-      clearCart();
+    try {
+      const updatedCart = cart.filter((item) => {
+        // If size is provided, match both variantId and size
+        if (size !== undefined) {
+          return !(item.variantId === variantId && item.size === size);
+        }
+        // If no size provided, match only variantId (for backwards compatibility)
+        return item.variantId !== variantId;
+      });
+
+      setCart(updatedCart);
+
+      // If cart is empty, clear checkout
+      if (updatedCart.length === 0) {
+        clearCart();
+        return;
+      }
+
+      // Update Shopify cart
+      if (checkout?.id) {
+        const lineItems = updatedCart.map((cartItem) => {
+          const attributes = [];
+
+          if (cartItem.size) {
+            attributes.push({ key: 'Size', value: cartItem.size });
+          }
+
+          return {
+            merchandiseId: cartItem.variantId,
+            quantity: cartItem.quantity,
+            attributes,
+          };
+        });
+
+        const updatedCheckout = await replaceCartLines(checkout.id, lineItems);
+        const checkoutData = {
+          id: updatedCheckout.id,
+          checkoutUrl: updatedCheckout.checkoutUrl,
+          lines: updatedCheckout.lines,
+          totalPrice: parseFloat(updatedCheckout.cost.totalAmount.amount),
+        };
+        setCheckout(checkoutData);
+        localStorage.setItem('checkout', JSON.stringify(checkoutData));
+      }
+    } catch (error) {
+      console.error('Error updating cart after removal:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Update item quantity
-  const updateQuantity = (variantId: string, quantity: number): void => {
+  const updateQuantity = async (variantId: string, quantity: number, size?: string): Promise<void> => {
     if (quantity <= 0) {
-      removeFromCart(variantId);
+      await removeFromCart(variantId, size);
       return;
     }
 
-    const updatedCart = cart.map((item) =>
-      item.variantId === variantId ? { ...item, quantity } : item
-    );
-    setCart(updatedCart);
+    setLoading(true);
+
+    try {
+      const updatedCart = cart.map((item) => {
+        // If size is provided, match both variantId and size
+        if (size !== undefined) {
+          return item.variantId === variantId && item.size === size
+            ? { ...item, quantity }
+            : item;
+        }
+        // If no size provided, match only variantId
+        return item.variantId === variantId ? { ...item, quantity } : item;
+      });
+
+      setCart(updatedCart);
+
+      // Update Shopify cart
+      if (checkout?.id) {
+        const lineItems = updatedCart.map((cartItem) => {
+          const attributes = [];
+
+          if (cartItem.size) {
+            attributes.push({ key: 'Size', value: cartItem.size });
+          }
+
+          return {
+            merchandiseId: cartItem.variantId,
+            quantity: cartItem.quantity,
+            attributes,
+          };
+        });
+
+        const updatedCheckout = await replaceCartLines(checkout.id, lineItems);
+        const checkoutData = {
+          id: updatedCheckout.id,
+          checkoutUrl: updatedCheckout.checkoutUrl,
+          lines: updatedCheckout.lines,
+          totalPrice: parseFloat(updatedCheckout.cost.totalAmount.amount),
+        };
+        setCheckout(checkoutData);
+        localStorage.setItem('checkout', JSON.stringify(checkoutData));
+      }
+    } catch (error) {
+      console.error('Error updating cart quantity:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Clear cart

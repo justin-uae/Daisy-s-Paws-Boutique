@@ -9,6 +9,7 @@ interface Product {
   id: string;
   title: string;
   description: string;
+  availableForSale: string;
   price: number;
   originalPrice: number | null;
   images: string[];
@@ -20,7 +21,14 @@ interface Product {
 
 interface ProductDetail extends Product {
   descriptionHtml: string;
-  variantId: string; // Just need the variant ID for cart
+  howToMeasureImage: any;
+  sizeChartImage: any;
+  variants: Array<{
+    id: string;
+    title: string;
+    price: number;
+    availableForSale: boolean;
+  }>;
 }
 
 interface CartLineItem {
@@ -78,6 +86,66 @@ export interface CustomerData {
   createdAt: string;
   displayName: string;
 }
+
+/**
+ * Fetch banner images from collection's list metafield
+ */
+export const fetchBannerImages = async (collectionHandle: string = 'frontpage'): Promise<string[]> => {
+  const query = `
+    query getCollectionBanners($handle: String!) {
+      collection(handle: $handle) {
+        metafield(namespace: "custom", key: "banner_image") {
+          type
+          references(first: 20) {
+            edges {
+              node {
+                ... on MediaImage {
+                  image {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const variables = { handle: collectionHandle };
+
+  try {
+    const response = await fetch(
+      `https://${import.meta.env.VITE_SHOPIFY_STORE_DOMAIN}/api/2024-01/graphql.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN,
+        },
+        body: JSON.stringify({ query, variables }),
+      }
+    );
+
+    const { data } = await response.json();
+
+    // Extract image URLs from the list
+    if (!data?.collection?.metafield?.references?.edges) {
+      console.warn('No banner images found in collection metafield');
+      return [];
+    }
+
+    const images = data.collection.metafield.references.edges
+      .map((edge: any) => edge.node.image?.url)
+      .filter((url: string) => url);
+    return images;
+
+  } catch (error) {
+    console.error('Error fetching banner images:', error);
+    return [];
+  }
+};
 
 // Get all collections
 export const getAllCategoryCollections = async (): Promise<{
@@ -201,6 +269,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
             id
             title
             description
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -255,6 +324,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
       id: edge.node.id,
       title: edge.node.title,
       description: edge.node.description,
+      availableForSale: edge.node.availableForSale,
       price: parseFloat(edge.node.priceRange.minVariantPrice.amount),
       originalPrice: edge.node.compareAtPriceRange?.minVariantPrice?.amount
         ? parseFloat(edge.node.compareAtPriceRange.minVariantPrice.amount)
@@ -268,7 +338,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
   });
 };
 
-// Fetch single product by ID
+// Fetch single product by ID with Variants
 export const getProductById = async (productId: string): Promise<ProductDetail> => {
   const query = `
     query GetProduct($id: ID!) {
@@ -277,6 +347,7 @@ export const getProductById = async (productId: string): Promise<ProductDetail> 
         title
         description
         descriptionHtml
+        availableForSale
         priceRange {
           minVariantPrice {
             amount
@@ -296,10 +367,16 @@ export const getProductById = async (productId: string): Promise<ProductDetail> 
             }
           }
         }
-        variants(first: 1) {
+        variants(first: 50) {
           edges {
             node {
               id
+              title
+              priceV2 {
+                amount
+                currencyCode
+              }
+              availableForSale
             }
           }
         }
@@ -307,10 +384,20 @@ export const getProductById = async (productId: string): Promise<ProductDetail> 
           {namespace: "custom", key: "category"},
           {namespace: "custom", key: "rating"},
           {namespace: "custom", key: "reviews_count"},
-          {namespace: "custom", key: "features"}
+          {namespace: "custom", key: "features"},
+          {namespace: "custom", key: "how_to_measure"},
+          {namespace: "custom", key: "size_chart"}
         ]) {
           key
           value
+          reference {
+            ... on MediaImage {
+              image {
+                url
+                altText
+              }
+            }
+          }
         }
       }
     }
@@ -332,9 +419,26 @@ export const getProductById = async (productId: string): Promise<ProductDetail> 
     }
   }
 
+  // Parse variants
+  const variants = product.variants.edges.map((edge: any) => ({
+    id: edge.node.id,
+    title: edge.node.title,
+    price: parseFloat(edge.node.priceV2.amount),
+    availableForSale: edge.node.availableForSale,
+  }));
+
+  // Get "How to Measure" image URL
+  const howToMeasureMetafield = product.metafields?.find((m: Metafield) => m?.key === 'how_to_measure');
+  const howToMeasureImage = howToMeasureMetafield?.reference?.image?.url || null;
+
+  // Get "Size Chart" image URL
+  const sizeChartMetafield = product.metafields?.find((m: Metafield) => m?.key === 'size_chart');
+  const sizeChartImage = sizeChartMetafield?.reference?.image?.url || null;
+
   return {
     id: product.id,
     title: product.title,
+    availableForSale: product.availableForSale,
     description: product.description,
     descriptionHtml: product.descriptionHtml,
     price: parseFloat(product.priceRange.minVariantPrice.amount),
@@ -342,11 +446,13 @@ export const getProductById = async (productId: string): Promise<ProductDetail> 
       ? parseFloat(product.compareAtPriceRange.minVariantPrice.amount)
       : null,
     images: product.images.edges.map((img: any) => img.node.url),
-    variantId: product.variants.edges[0]?.node.id || '', // Get first (and only) variant ID
+    variants: variants,
     category: product.metafields?.find((m: Metafield) => m?.key === 'category')?.value || '',
     rating: parseFloat(product.metafields?.find((m: Metafield) => m?.key === 'rating')?.value || '0'),
     reviewsCount: parseInt(product.metafields?.find((m: Metafield) => m?.key === 'reviews_count')?.value || '0'),
     features: features,
+    howToMeasureImage: howToMeasureImage,
+    sizeChartImage: sizeChartImage,
   };
 };
 
@@ -592,6 +698,69 @@ export const removeCartLines = async (cartId: string, lineIds: string[]): Promis
   }
 
   return data.cartLinesRemove.cart;
+};
+
+// Replace all cart lines (for quantity updates and removals)
+export const replaceCartLines = async (cartId: string, lineItems: CartLineItem[]): Promise<Cart> => {
+  // First, get current cart to get line IDs
+  const getCartQuery = `
+    query GetCart($cartId: ID!) {
+      cart(id: $cartId) {
+        id
+        checkoutUrl
+        lines(first: 50) {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const { data: cartData } = await client.request(getCartQuery, {
+      variables: { cartId }
+    });
+
+    // Remove all existing lines if any
+    if (cartData?.cart?.lines?.edges?.length > 0) {
+      const lineIds = cartData.cart.lines.edges.map((edge: any) => edge.node.id);
+      await removeCartLines(cartId, lineIds);
+    }
+
+    // Add new lines if any
+    if (lineItems.length > 0) {
+      const updatedCart = await addToCart(cartId, lineItems);
+      return updatedCart;
+    } else {
+      // Return cart with updated data
+      const emptyCartData = await client.request(getCartQuery, {
+        variables: { cartId }
+      });
+      return {
+        id: emptyCartData.data.cart.id,
+        checkoutUrl: emptyCartData.data.cart.checkoutUrl,
+        lines: [],
+        cost: emptyCartData.data.cart.cost
+      };
+    }
+  } catch (error) {
+    // If cart doesn't exist or is expired, create a new one
+    console.log('Cart not found or expired, creating new cart:', error);
+    if (lineItems.length > 0) {
+      return await createCart(lineItems);
+    } else {
+      throw new Error('Cannot create empty cart');
+    }
+  }
 };
 
 // Get customer data
