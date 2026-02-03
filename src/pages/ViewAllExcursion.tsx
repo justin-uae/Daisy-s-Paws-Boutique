@@ -356,37 +356,98 @@ const FilterSidebar = ({ uniqueCategories, selectedCategory, setSelectedCategory
 );
 
 // Mobile Filter Drawer
-const MobileFilterDrawer = ({ uniqueCategories, selectedCategory, setSelectedCategory, clearFilters, onClose }: any) => (
-    <>
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden animate-fadeIn" onClick={onClose} />
-        <div className="fixed inset-y-0 left-0 w-80 max-w-full bg-white z-50 lg:hidden overflow-y-auto shadow-2xl animate-slideInLeft">
-            <div className="p-6">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-[#E6B8A2]">
-                    <div className="flex items-center gap-2">
-                        <SlidersHorizontal className="w-5 h-5 text-[#8B5A3C]" />
-                        <h2 className="text-xl font-black text-[#5D4037]" style={{ fontFamily: 'Georgia, serif' }}>Filters</h2>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-[#F5EDE4] rounded-full transition-colors">
-                        <X className="w-6 h-6 text-[#5D4037]" />
-                    </button>
-                </div>
-                <FilterSidebar
-                    uniqueCategories={uniqueCategories}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    clearFilters={clearFilters}
-                />
-                <button
-                    onClick={onClose}
-                    className="w-full mt-6 px-6 py-4 bg-gradient-to-r from-[#D4A798] via-[#C19A8B] to-[#D4A798] text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
-                >
-                    View Products
-                </button>
-            </div>
-        </div>
-    </>
-);
+// Mobile Filter Drawer
+const MobileFilterDrawer = ({ uniqueCategories, selectedCategory, setSelectedCategory, clearFilters, onClose }: any) => {
 
+    const handleCategorySelect = (category: string) => {
+        setSelectedCategory(category);
+        onClose();
+    };
+
+    const handleClearFilters = () => {
+        clearFilters();
+        onClose();
+    };
+
+    return (
+        <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden animate-fadeIn" onClick={onClose} />
+            <div className="fixed inset-y-0 left-0 w-80 max-w-full bg-white z-50 lg:hidden overflow-y-auto shadow-2xl animate-slideInLeft">
+                <div className="p-6">
+                    <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-[#E6B8A2]">
+                        <div className="flex items-center gap-2">
+                            <SlidersHorizontal className="w-5 h-5 text-[#8B5A3C]" />
+                            <h2 className="text-xl font-black text-[#5D4037]" style={{ fontFamily: 'Georgia, serif' }}>Filters</h2>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-[#F5EDE4] rounded-full transition-colors">
+                            <X className="w-6 h-6 text-[#5D4037]" />
+                        </button>
+                    </div>
+
+                    {/* Modified FilterSidebar content inline */}
+                    <div className="bg-white rounded-2xl">
+                        <div className="flex justify-between items-center mb-6 pb-4 border-b-2 border-[#E6B8A2]">
+                            <div className="flex items-center gap-2">
+                            </div>
+                            <button
+                                onClick={handleClearFilters}
+                                className="text-sm text-[#8B5A3C] hover:text-[#5D4037] font-bold hover:underline transition-colors"
+                            >
+                                Reset
+                            </button>
+                        </div>
+
+                        {/* Category Filter */}
+                        <div className="mb-6 pb-6 border-b-2 border-[#E6B8A2] last:border-0">
+                            <h3 className="font-bold text-[#5D4037] mb-3 flex items-center gap-2">
+                                <span className="w-1 h-5 bg-gradient-to-b from-[#D4A798] to-[#C19A8B] rounded-full"></span>
+                                Category
+                            </h3>
+                            <div className="space-y-2">
+                                <button
+                                    onClick={() => handleCategorySelect('')}
+                                    className={`group flex items-center gap-2 w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium ${!selectedCategory
+                                        ? 'bg-gradient-to-r from-[#D4A798] to-[#C19A8B] text-white shadow-md'
+                                        : 'hover:bg-[#F5EDE4] text-[#5D4037]'
+                                        }`}
+                                >
+                                    <PawPrint className={`w-4 h-4 ${!selectedCategory ? 'text-white' : 'text-[#8B5A3C]'}`} />
+                                    All Products
+                                </button>
+                                {uniqueCategories.map((category: string) => (
+                                    <button
+                                        key={category}
+                                        onClick={() => handleCategorySelect(category)}
+                                        className={`group flex items-center gap-2 w-full text-left px-3 py-2.5 rounded-xl transition-all font-medium ${selectedCategory === category
+                                            ? 'bg-gradient-to-r from-[#D4A798] to-[#C19A8B] text-white shadow-md'
+                                            : 'hover:bg-[#F5EDE4] text-[#5D4037]'
+                                            }`}
+                                    >
+                                        <PawPrint className={`w-4 h-4 ${selectedCategory === category ? 'text-white' : 'text-[#8B5A3C]'}`} />
+                                        {category}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Info Box */}
+                        <div className="mt-6 p-4 bg-gradient-to-br from-[#F5EDE4] to-[#F8F4ED] rounded-xl border border-[#E6B8A2]">
+                            <div className="flex items-start gap-3">
+                                <Sparkles className="w-5 h-5 text-[#8B5A3C] flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="font-bold text-[#5D4037] text-sm mb-1" style={{ fontFamily: 'Georgia, serif' }}>Need Help?</h4>
+                                    <p className="text-xs text-[#6D4C41] leading-relaxed">
+                                        Our pet fashion experts are here to help you find the perfect outfit for your furry friend
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
 // Product Card Component
 const ProductCard = ({ product, index, goToDetail, formatPrice }: any) => {
     // Check if product is out of stock (all variants unavailable)

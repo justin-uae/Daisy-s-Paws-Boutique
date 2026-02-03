@@ -198,14 +198,6 @@ export default function CartPage() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
                                         </div>
-                                        <span className="font-semibold text-xs sm:text-sm">14-Day Returns</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 sm:gap-3 text-[#5D4037]">
-                                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-[#8B5A3C] rounded-full flex items-center justify-center flex-shrink-0">
-                                            <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
                                         <span className="font-semibold text-xs sm:text-sm">Fast Shipping</span>
                                     </div>
                                 </div>

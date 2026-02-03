@@ -38,13 +38,13 @@ export default function WhyChooseUs() {
         },
         {
             icon: Package,
-            number: "300+",
-            label: "Stylish Products"
+            number: "Premium",
+            label: "Quality Fabrics"
         },
         {
             icon: PawPrint,
-            number: "25+",
-            label: "Countries Served"
+            number: "100%",
+            label: "Pet-Safe Materials"
         }
     ];
 

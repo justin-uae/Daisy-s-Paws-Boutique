@@ -11,7 +11,6 @@ export default function Footer() {
   ];
 
   const phoneNumber = import.meta.env.VITE_CONTACT_NUMBER;
-  const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
   const companyEmail = import.meta.env.VITE_COMPANY_EMAIL;
   const appURL = import.meta.env.VITE_APP_URL;
 
@@ -60,17 +59,14 @@ export default function Footer() {
                 <div className="bg-gradient-to-br from-[#9b8d7f] to-[#8a7d6f] p-1.5 rounded-lg group-hover:scale-110 transition-transform">
                   <MapPin className="w-4 h-4 text-white flex-shrink-0" />
                 </div>
-                <span className="text-sm text-center md:text-left font-medium">28 College Avenue Crosby L23 0ss</span>
+                <span className="text-sm text-center md:text-left font-medium">6a Old Market Place Altrincham WA14 4NP</span>
               </div>
               <div className="flex items-center gap-2 group">
                 <div className="bg-gradient-to-br from-[#9b8d7f] to-[#8a7d6f] p-1.5 rounded-lg group-hover:scale-110 transition-transform">
                   <Phone className="w-4 h-4 text-white flex-shrink-0" />
                 </div>
                 <a href={`tel:+${phoneNumber}`} className="text-sm hover:text-[#d4c4b0] transition-colors font-medium">
-                  +{phoneNumber},
-                </a>
-                <a href={`tel:+${whatsappNumber}`} className="text-sm hover:text-[#d4c4b0] transition-colors font-medium">
-                  +{whatsappNumber}
+                  +{phoneNumber}
                 </a>
               </div>
               <div className="flex items-center gap-2 group">

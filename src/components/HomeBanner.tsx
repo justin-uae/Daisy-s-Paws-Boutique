@@ -64,13 +64,13 @@ export default function HomepageBanner() {
     return (
         <>
             <div className="relative">
-                <div className="relative min-h-[450px] sm:min-h-[500px] md:min-h-[30rem] lg:min-h-[35rem] bg-[#e1cfbd] overflow-hidden">
+                <div className="relative min-h-[500px] sm:min-h-[550px] md:min-h-[600px] lg:min-h-[650px] bg-[#e1cfbd] overflow-hidden">
                     {/* Banner content container */}
                     <PawsAnimated />
                     <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center py-8 sm:py-12">
-                        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
+                        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
                             {/* Left side - Text content */}
-                            <div className="w-full lg:w-[45%] text-left relative">
+                            <div className="w-full lg:w-[48%] text-left relative">
                                 <div className="absolute -top-8 -left-6 w-20 h-20 opacity-20 hidden sm:block">
                                     <svg viewBox="0 0 100 100" className="text-[#252120]" fill="currentColor">
                                         <path d="M20,45 Q20,35 30,35 Q40,35 40,45 L40,55 Q40,65 30,65 Q20,65 20,55 Z" />
@@ -119,7 +119,8 @@ export default function HomepageBanner() {
                             </div>
 
                             {/* Right side - Image Slider */}
-                            <div className="w-full lg:w-[43%] flex justify-center lg:justify-end relative mt-4 lg:mt-0">
+                            {/* Right side - Image Slider */}
+                            <div className="w-full lg:w-[48%] flex justify-center lg:justify-end relative">
                                 <div className="absolute inset-0 flex items-center justify-center opacity-10">
                                     <svg className="w-full h-full text-[#252120]" viewBox="0 0 200 200">
                                         <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -127,12 +128,12 @@ export default function HomepageBanner() {
                                     </svg>
                                 </div>
 
-                                <div className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl relative z-10">
+                                <div className="w-full max-w-md md:max-w-lg lg:max-w-xl relative z-10">
                                     {/* Slider Container */}
-                                    <div className="relative overflow-hidden rounded-4xl">
+                                    <div className="relative overflow-hidden">
                                         {loading ? (
                                             // Loading skeleton
-                                            <div className="w-full h-[250px] sm:h-[300px] md:h-[450px] lg:h-[500px] bg-[#DED8D6] animate-pulse rounded-4xl flex items-center justify-center">
+                                            <div className="w-full aspect-[4/5] bg-[#DED8D6] animate-pulse flex items-center justify-center">
                                                 <PawPrint className="w-16 h-16 text-[#A79A95] opacity-40" />
                                             </div>
                                         ) : (
@@ -143,11 +144,11 @@ export default function HomepageBanner() {
                                                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                                                 >
                                                     {bannerImages.map((image, index) => (
-                                                        <div key={index} className="min-w-full">
+                                                        <div key={index} className="min-w-full aspect-[4/5] flex items-center justify-center p-4">
                                                             <img
                                                                 src={image}
                                                                 alt={`Dog Fashion Collection ${index + 1}`}
-                                                                className="w-full h-[250px] sm:h-[300px] md:h-[450px] lg:h-[500px] object-cover"
+                                                                className="w-full h-full object-contain"
                                                                 loading={index === 0 ? "eager" : "lazy"}
                                                             />
                                                         </div>
@@ -159,14 +160,14 @@ export default function HomepageBanner() {
                                                     <>
                                                         <button
                                                             onClick={prevSlide}
-                                                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
+                                                            className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white p-2.5 rounded-full shadow-lg transition-all hover:scale-110 z-10"
                                                             aria-label="Previous image"
                                                         >
                                                             <ChevronLeft className="w-5 h-5 text-[#3B3634]" />
                                                         </button>
                                                         <button
                                                             onClick={nextSlide}
-                                                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all hover:scale-110 z-10"
+                                                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/95 hover:bg-white p-2.5 rounded-full shadow-lg transition-all hover:scale-110 z-10"
                                                             aria-label="Next image"
                                                         >
                                                             <ChevronRight className="w-5 h-5 text-[#3B3634]" />

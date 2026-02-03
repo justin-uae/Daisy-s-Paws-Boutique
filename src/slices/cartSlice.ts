@@ -72,14 +72,6 @@ export const addToCartAsync = createAsyncThunk(
                 {
                     merchandiseId: item.variantId,
                     quantity: item.quantity,
-                    attributes: item.customAttributes
-                        ? [
-                            { key: 'Date', value: item.customAttributes.date || '' },
-                            { key: 'Adults', value: item.customAttributes.adults || '0' },
-                            { key: 'Children', value: item.customAttributes.children || '0' },
-                            { key: 'Total Guests', value: item.customAttributes.totalGuests || '0' },
-                        ]
-                        : [],
                 },
             ];
 
@@ -89,7 +81,6 @@ export const addToCartAsync = createAsyncThunk(
                     updatedCheckout = await addToCartAPI(currentCheckout.id, lineItems);
                 } catch (error) {
                     // If cart expired, create new one
-                    console.log('Cart expired, creating new cart');
                     updatedCheckout = await createCart(lineItems);
                 }
             } else {
@@ -180,10 +171,6 @@ const cartSlice = createSlice({
                     state.items[existingItemIndex].customAttributes = {
                         ...state.items[existingItemIndex].customAttributes,
                         ...item.customAttributes,
-                        totalGuests: (
-                            parseInt(state.items[existingItemIndex].customAttributes?.totalGuests || '0') +
-                            parseInt(item.customAttributes?.totalGuests || '0')
-                        ).toString(),
                     };
                 } else {
                     // Add new item

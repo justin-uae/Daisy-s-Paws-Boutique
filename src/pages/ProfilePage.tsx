@@ -95,7 +95,7 @@ export default function ProfilePage() {
                                     <MapPin className="w-4 h-4 text-amber-600" />
                                     Location
                                 </p>
-                                <p className="font-black text-base sm:text-lg text-gray-900">United Arab Emirates</p>
+                                <p className="font-black text-base sm:text-lg text-gray-900">UK</p>
                             </div>
 
                             {/* Total Orders */}

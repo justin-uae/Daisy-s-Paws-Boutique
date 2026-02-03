@@ -276,8 +276,8 @@ function ContactForm() {
                                     </div>
                                     <div className="min-w-0">
                                         <h3 className="font-black text-base text-gray-900 mb-1">Address</h3>
-                                        <p className="text-sm text-gray-700 font-medium">28 College Avenue,</p>
-                                        <p className="text-sm text-gray-700 font-medium">Crosby, L23 0ss</p>
+                                        <p className="text-sm text-gray-700 font-medium">6a Old Market Place,</p>
+                                        <p className="text-sm text-gray-700 font-medium">Altrincham WA14 4NP</p>
                                     </div>
                                 </div>
 
@@ -296,14 +296,14 @@ function ContactForm() {
                         {/* add proper address in map when it is provided */}
                         <div className="bg-white rounded-3xl overflow-hidden shadow-2xl border-2 border-[#e8dfd3] h-72 sm:h-80">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2374.1227528158283!2d-3.02981202282456!3d53.48413647232958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487b248a306b2425%3A0xf30418e0fd1fc51f!2s28%20College%20Ave%2C%20Crosby%2C%20Liverpool%20L23%200SS%2C%20UK!5e0!3m2!1sen!2sae!4v1769411279026!5m2!1sen!2sae"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2379.454205953763!2d-2.3528021228294445!3d53.38881447230164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487baca2a15d0107%3A0x478749c4bc33255e!2s6a%20Old%20Market%20Pl%2C%20Altrincham%20WA14%204NP%2C%20UK!5e0!3m2!1sen!2sae!4v1770097182986!5m2!1sen!2sae"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                                title="28 College Ave, Crosby, Liverpool L23 0SS, UK"
+                                title="6a Old Market Place Altrincham WA14 4NP"
                             />
                         </div>
                     </div>

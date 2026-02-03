@@ -143,7 +143,7 @@ export default function AboutPage() {
                                 <h2 className="text-3xl sm:text-4xl font-black">Our Vision</h2>
                             </div>
                             <p className="text-base sm:text-lg text-[#f5f0e8] leading-relaxed font-medium">
-                                To become the UAE's most trusted pet boutique, known for premium quality, exceptional service, and our unwavering commitment to pet wellness and happiness.
+                                To become the UK's most trusted pet boutique, known for premium quality, exceptional service, and our unwavering commitment to pet wellness and happiness.
                             </p>
                         </div>
                     </div>
@@ -205,49 +205,6 @@ export default function AboutPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Stats Section - Brighter */}
-            <div className="bg-gradient-to-br from-[#a69888] via-[#9b8d7f] to-[#8a7d6f] py-12 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden">
-                {/* Animated decorative elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#e8dfd3]/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#d4c4b0]/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '1s' }}></div>
-
-                {/* Animated paw prints */}
-                <div className="absolute top-1/4 left-1/4 w-32 h-32 text-[#e8dfd3]/20 animate-bounce" style={{ animationDuration: '3s' }}>
-                    <svg viewBox="0 0 100 100" fill="currentColor">
-                        <ellipse cx="50" cy="65" rx="15" ry="20" />
-                        <ellipse cx="35" cy="45" rx="8" ry="12" />
-                        <ellipse cx="50" cy="40" rx="8" ry="12" />
-                        <ellipse cx="65" cy="45" rx="8" ry="12" />
-                    </svg>
-                </div>
-
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">Our Journey in Numbers</h2>
-                        <p className="text-[#f5f0e8] text-lg font-medium">Serving pet families with love and excellence</p>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                        <div className="bg-white/10 backdrop-blur-sm border border-[#e8dfd3]/20 rounded-2xl p-8 text-center hover:bg-white/15 transition-all">
-                            <h3 className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-[#e8dfd3] to-[#d4c4b0] bg-clip-text text-transparent mb-3">1000+</h3>
-                            <p className="text-base sm:text-lg text-[#f5f0e8] font-bold uppercase tracking-wider">Premium Products</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm border border-[#e8dfd3]/20 rounded-2xl p-8 text-center hover:bg-white/15 transition-all">
-                            <h3 className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-[#e8dfd3] to-[#d4c4b0] bg-clip-text text-transparent mb-3">50K+</h3>
-                            <p className="text-base sm:text-lg text-[#f5f0e8] font-bold uppercase tracking-wider">Happy Pets</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm border border-[#e8dfd3]/20 rounded-2xl p-8 text-center hover:bg-white/15 transition-all">
-                            <h3 className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-[#e8dfd3] to-[#d4c4b0] bg-clip-text text-transparent mb-3">4.8★</h3>
-                            <p className="text-base sm:text-lg text-[#f5f0e8] font-bold uppercase tracking-wider">Customer Rating</p>
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-sm border border-[#e8dfd3]/20 rounded-2xl p-8 text-center hover:bg-white/15 transition-all">
-                            <h3 className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-[#e8dfd3] to-[#d4c4b0] bg-clip-text text-transparent mb-3">7</h3>
-                            <p className="text-base sm:text-lg text-[#f5f0e8] font-bold uppercase tracking-wider">Emirates Served</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* CTA Section - Brighter */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
                 <div className="relative bg-gradient-to-br from-[#a69888] via-[#9b8d7f] to-[#8a7d6f] rounded-3xl p-10 sm:p-12 md:p-16 text-center text-white shadow-2xl overflow-hidden">
