@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Star, ChevronLeft, ChevronRight, PawPrint, Sparkles, ShoppingBag, Heart } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, PawPrint, ShoppingBag, Heart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { fetchAllProducts } from '../slices/productsSlice';
@@ -80,14 +80,14 @@ export default function PopularProducts() {
                     <div className="hidden sm:flex gap-2">
                         <button
                             onClick={() => scroll('left')}
-                            className="bg-white border-2 border-[#d4c4b0] hover:border-[#9b8d7f] hover:bg-[#f5f0e8] rounded-full p-3 transition-all shadow-md hover:shadow-lg group"
+                            className="bg-white border-2 border-[#918172] hover:border-[#9b8d7f] hover:bg-[#f5f0e8] rounded-full p-3 transition-all shadow-md hover:shadow-lg group"
                             aria-label="Scroll left"
                         >
                             <ChevronLeft className="w-5 h-5 text-[#9b8d7f] group-hover:text-[#6b5d52]" />
                         </button>
                         <button
                             onClick={() => scroll('right')}
-                            className="bg-white border-2 border-[#d4c4b0] hover:border-[#9b8d7f] hover:bg-[#f5f0e8] rounded-full p-3 transition-all shadow-md hover:shadow-lg group"
+                            className="bg-white border-2 border-[#918172] hover:border-[#9b8d7f] hover:bg-[#f5f0e8] rounded-full p-3 transition-all shadow-md hover:shadow-lg group"
                             aria-label="Scroll right"
                         >
                             <ChevronRight className="w-5 h-5 text-[#9b8d7f] group-hover:text-[#6b5d52]" />
@@ -101,7 +101,7 @@ export default function PopularProducts() {
                     className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
                     style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
-                    {displayProducts.map((product, index) => (
+                    {displayProducts?.map((product) => (
                         <div
                             key={product.id}
                             className="group cursor-pointer w-[75vw] sm:w-[45vw] md:w-[320px] lg:w-[300px] flex-shrink-0 transform hover:scale-[1.02] transition-all duration-300"
@@ -110,24 +110,18 @@ export default function PopularProducts() {
                             {/* Card Container */}
                             <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-[#e8dfd3] hover:border-[#9b8d7f]">
                                 {/* Image */}
-                                <div className="relative h-52 sm:h-56 md:h-60 lg:h-64 overflow-hidden bg-gradient-to-br from-[#f5f0e8] to-[#e8dfd3]">
+                                <div className="relative overflow-hidden bg-gradient-to-br from-[#f5f0e8] to-[#e8dfd3]"
+                                >
                                     <img
                                         src={product.images[0]}
                                         alt={product.title}
-                                        className="w-full h-full object-contain object-center group-hover:scale-110 transition-transform duration-500"
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        style={{ minHeight: '240px', maxHeight: '380px', display: 'block' }}
                                         loading="lazy"
                                     />
 
                                     {/* Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#6b5d52]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                    {/* Bestseller Badge - Show for first 3 products */}
-                                    {index < 3 && (
-                                        <div className="absolute top-3 left-3 bg-gradient-to-r from-[#9b8d7f] to-[#8a7d6f] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
-                                            <Sparkles className="w-3 h-3" />
-                                            <span>Bestseller</span>
-                                        </div>
-                                    )}
 
                                     {/* Heart Icon - Top Right */}
                                     <div className="absolute top-3 right-3 w-8 h-8 sm:w-9 sm:h-9 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-[#e8dfd3] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -135,7 +129,7 @@ export default function PopularProducts() {
                                     </div>
 
                                     {/* Price Badge */}
-                                    <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-xl border border-[#d4c4b0]">
+                                    <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-xl border border-[#918172]">
                                         <div className="flex flex-col">
                                             {/* Original (Strikethrough) Price */}
                                             <span className="text-[10px] sm:text-xs text-[#8a7d6f] line-through leading-tight">
@@ -152,7 +146,7 @@ export default function PopularProducts() {
 
                                     {/* Rating Badge */}
                                     {product.rating > 0 && (
-                                        <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1.5 shadow-lg border border-[#d4c4b0] flex items-center gap-1">
+                                        <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1.5 shadow-lg border border-[#918172] flex items-center gap-1">
                                             <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#9b8d7f] text-[#9b8d7f]" />
                                             <span className="text-xs sm:text-sm font-bold text-gray-900">
                                                 {product.rating.toFixed(1)}
@@ -179,7 +173,7 @@ export default function PopularProducts() {
                                     </h3>
 
                                     {/* View Details Button */}
-                                    <button className="w-full bg-[#f5f0e8] group-hover:bg-[#9b8d7f] text-[#6b5d52] group-hover:text-white font-bold text-sm py-2.5 sm:py-3 rounded-xl transition-all duration-300 border border-[#d4c4b0] group-hover:border-[#9b8d7f] shadow-sm group-hover:shadow-md flex items-center justify-center gap-2">
+                                    <button className="w-full bg-[#f5f0e8] group-hover:bg-[#9b8d7f] text-[#6b5d52] group-hover:text-white font-bold text-sm py-2.5 sm:py-3 rounded-xl transition-all duration-300 border border-[#918172] group-hover:border-[#9b8d7f] shadow-sm group-hover:shadow-md flex items-center justify-center gap-2">
                                         <ShoppingBag className="w-4 h-4" />
                                         <span>View Product</span>
                                     </button>

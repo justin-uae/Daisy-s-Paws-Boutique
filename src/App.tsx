@@ -7,7 +7,6 @@ import ScrollToTop from './helper/ScrollToTop';
 import { useAppDispatch } from './hooks/useRedux';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { fetchExchangeRates } from './slices/currencySlice';
-import CartPage from './pages/CartPage';
 import { CartProvider } from './context/Cartcontext';
 import { Toaster } from 'react-hot-toast';
 
@@ -17,10 +16,9 @@ const ItemDetailpage = lazy(() => import('./components/ItemDetailpage'));
 const Navbar = lazy(() => import('./components/Navbar'));
 const ContactUsPage = lazy(() => import('./components/ContactUs'));
 const FallbackPage = lazy(() => import('./components/FallBackPage'));
-// const CartPage = lazy(() => import('./pages/CartPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
 const AboutPage = lazy(() => import('./pages/AboutUs'));
-const ViewAllExcursion = lazy(() => import('./pages/ViewAllExcursion'))
-// const EBookPage = lazy(() => import('./pages/EBookPage'))
+const ViewAllProducts = lazy(() => import('./pages/ViewAllProducts'))
 
 function App() {
   const dispatch = useAppDispatch();
@@ -61,7 +59,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path='/' element={<ExcursionsDubaiHero />} />
-            <Route path='/products' element={<ViewAllExcursion />} />
+            <Route path='/products' element={<ViewAllProducts />} />
             <Route path='/products/:id' element={<ItemDetailpage />} />
             <Route path='/about' element={<AboutPage />} />
             <Route path='/contact' element={<ContactUsPage />} />

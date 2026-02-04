@@ -169,7 +169,7 @@ export default function WhyChooseUs() {
                         return (
                             <div
                                 key={index}
-                                className="group bg-white rounded-2xl p-6 sm:p-7 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 text-center border-2 border-[#e8dfd3] hover:border-[#9b8d7f] relative overflow-hidden"
+                                className="group bg-white rounded-2xl p-6 sm:p-7 md:p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 text-center border-2 border-[#918172] hover:border-[#9b8d7f] relative overflow-hidden"
                             >
                                 {/* Paw pattern overlay */}
                                 <div className="absolute top-0 right-0 w-20 h-20 opacity-10 group-hover:opacity-20 transition-opacity">

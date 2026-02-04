@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CheckCircle, Check, ChevronUp, ChevronDown, HelpCircle, Star, Package, PawPrint, ShoppingCart, Ruler } from 'lucide-react';
+import { CheckCircle, Check, ChevronUp, ChevronDown, HelpCircle, Star, Package, PawPrint, ShoppingCart, Ruler, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { fetchProductById } from '../slices/productsSlice';
@@ -21,6 +21,7 @@ export default function ItemDetailpage() {
         price: number;
         availableForSale: boolean;
     } | null>(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const { formatPrice } = useCurrency();
 
     // Accordion states
@@ -32,6 +33,7 @@ export default function ItemDetailpage() {
     // Modal states
     const [showHowToMeasure, setShowHowToMeasure] = useState(false);
     const [showSizeChart, setShowSizeChart] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false);
 
     // Fetch product on mount
     useEffect(() => {
@@ -48,6 +50,8 @@ export default function ItemDetailpage() {
         } else {
             setSelectedVariant(null);
         }
+        // Reset selected image when product changes
+        setSelectedImageIndex(0);
     }, [selectedProduct?.id]);
 
     const isBundle = selectedProduct?.category?.toLowerCase() === 'bundle';
@@ -163,6 +167,22 @@ Thank you! 🐶`;
         window.open(whatsappUrl, '_blank');
     };
 
+    const handlePreviousImage = () => {
+        if (selectedProduct?.images && selectedProduct.images.length > 0) {
+            setSelectedImageIndex((prev) =>
+                prev === 0 ? selectedProduct.images.length - 1 : prev - 1
+            );
+        }
+    };
+
+    const handleNextImage = () => {
+        if (selectedProduct?.images && selectedProduct.images.length > 0) {
+            setSelectedImageIndex((prev) =>
+                prev === selectedProduct.images.length - 1 ? 0 : prev + 1
+            );
+        }
+    };
+
     if (loading) {
         return <LoadingSkeleton />;
     }
@@ -174,6 +194,7 @@ Thank you! 🐶`;
     const subtotal = formatPrice((selectedVariant?.price || selectedProduct.price) * quantity);
     const hasVariants = selectedProduct.variants && selectedProduct.variants.length > 1;
     const hasSizeInfo = selectedProduct.howToMeasureImage || selectedProduct.sizeChartImage;
+    const hasMultipleImages = selectedProduct.images && selectedProduct.images.length > 1;
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#F8F4ED] via-white to-[#F8F4ED]">
@@ -238,14 +259,83 @@ Thank you! 🐶`;
                     <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                         {/* Image Gallery */}
                         {selectedProduct.images && selectedProduct.images.length > 0 && (
-                            <div className="relative w-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg sm:shadow-2xl border border-[#DED8D6] sm:border-2 bg-gradient-to-br from-[#EBEAE9] to-[#DED8D6]">
-                                <img
-                                    src={selectedProduct.images[0] || 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800'}
-                                    alt={selectedProduct.title}
-                                    className="w-full h-auto max-h-[350px] sm:max-h-[500px] md:max-h-[600px] object-contain mx-auto"
-                                />
+                            <div className="relative">
+                                <div
+                                    className="relative bg-[#F5F5F5] rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm border border-gray-200 cursor-pointer group flex items-center justify-center"
+                                    style={{ minHeight: '400px', maxHeight: '600px' }}
+                                    onClick={() => setShowImageModal(true)}
+                                >
+                                    <img
+                                        src={selectedProduct.images[selectedImageIndex] || 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800'}
+                                        alt={`${selectedProduct.title} - Image ${selectedImageIndex + 1}`}
+                                        className="w-full h-auto max-h-[600px] object-contain transition-transform group-hover:scale-105"
+                                    />
+
+                                    {/* Click to view hint */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center pointer-events-none">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                                            Click to enlarge
+                                        </div>
+                                    </div>
+
+                                    {/* Navigation Arrows */}
+                                    {hasMultipleImages && (
+                                        <>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handlePreviousImage();
+                                                }}
+                                                className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-50 p-2 sm:p-2.5 rounded-full transition-all shadow-md hover:shadow-lg z-10"
+                                                aria-label="Previous image"
+                                            >
+                                                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleNextImage();
+                                                }}
+                                                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-50 p-2 sm:p-2.5 rounded-full transition-all shadow-md hover:shadow-lg z-10"
+                                                aria-label="Next image"
+                                            >
+                                                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {/* Image Counter */}
+                                    {hasMultipleImages && (
+                                        <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-4 bg-gray-800/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold">
+                                            {selectedImageIndex + 1} / {selectedProduct.images.length}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Thumbnails */}
+                                {hasMultipleImages && (
+                                    <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4 overflow-x-auto pb-2">
+                                        {selectedProduct.images.map((image, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => setSelectedImageIndex(index)}
+                                                className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden transition-all border-2 ${selectedImageIndex === index
+                                                        ? 'border-[#8B5A3C] ring-2 ring-[#8B5A3C] ring-offset-2'
+                                                        : 'border-gray-200 hover:border-gray-300'
+                                                    }`}
+                                            >
+                                                <img
+                                                    src={image}
+                                                    alt={`${selectedProduct.title} - Thumbnail ${index + 1}`}
+                                                    className="w-full h-full object-cover bg-[#F5F5F5]"
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
+
                         {/* Title & Details */}
                         <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-[#DED8D6] sm:border-2">
                             <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2">
@@ -424,7 +514,91 @@ Thank you! 🐶`;
                             </AccordionSection>
                         )}
 
-                        {/* Image Modals */}
+                        {/* Full-Screen Image Modal */}
+                        {showImageModal && selectedProduct.images && (
+                            <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm" onClick={() => setShowImageModal(false)}>
+                                <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-6">
+                                    {/* Close Button */}
+                                    <button
+                                        onClick={() => setShowImageModal(false)}
+                                        className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-gray-100 text-gray-900 rounded-full flex items-center justify-center transition-colors shadow-lg z-20 font-bold text-xl"
+                                    >
+                                        ✕
+                                    </button>
+
+                                    {/* Image Counter */}
+                                    {hasMultipleImages && (
+                                        <div className="absolute top-4 left-1/2 -translate-x-1/2 sm:top-6 bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full text-sm sm:text-base font-bold shadow-lg z-20">
+                                            {selectedImageIndex + 1} / {selectedProduct.images.length}
+                                        </div>
+                                    )}
+
+                                    {/* Main Image Container */}
+                                    <div className="relative w-full h-full max-w-7xl flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                                        <img
+                                            src={selectedProduct.images[selectedImageIndex]}
+                                            alt={`${selectedProduct.title} - Image ${selectedImageIndex + 1}`}
+                                            className="max-w-full max-h-full object-contain"
+                                        />
+
+                                        {/* Navigation Arrows */}
+                                        {hasMultipleImages && (
+                                            <>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handlePreviousImage();
+                                                    }}
+                                                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-gray-100 text-gray-900 rounded-full flex items-center justify-center transition-all shadow-lg"
+                                                    aria-label="Previous image"
+                                                >
+                                                    <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleNextImage();
+                                                    }}
+                                                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white hover:bg-gray-100 text-gray-900 rounded-full flex items-center justify-center transition-all shadow-lg"
+                                                    aria-label="Next image"
+                                                >
+                                                    <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {/* Thumbnail Navigation */}
+                                    {hasMultipleImages && (
+                                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-full px-4 sm:bottom-6">
+                                            <div className="flex gap-2 sm:gap-3 bg-black/60 backdrop-blur-sm p-2 sm:p-3 rounded-xl overflow-x-auto max-w-full">
+                                                {selectedProduct.images.map((image, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedImageIndex(index);
+                                                        }}
+                                                        className={`relative flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden transition-all border-2 ${selectedImageIndex === index
+                                                                ? 'border-white ring-2 ring-white scale-110'
+                                                                : 'border-transparent hover:border-white/50'
+                                                            }`}
+                                                    >
+                                                        <img
+                                                            src={image}
+                                                            alt={`Thumbnail ${index + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* How to Measure Modal */}
                         {showHowToMeasure && selectedProduct.howToMeasureImage && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowHowToMeasure(false)}>
                                 <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
@@ -450,6 +624,7 @@ Thank you! 🐶`;
                             </div>
                         )}
 
+                        {/* Size Chart Modal */}
                         {showSizeChart && selectedProduct.sizeChartImage && (
                             <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowSizeChart(false)}>
                                 <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
@@ -474,6 +649,7 @@ Thank you! 🐶`;
                                 </div>
                             </div>
                         )}
+
                         {/* FAQ */}
                         <AccordionSection
                             title="Frequently Asked Questions"
