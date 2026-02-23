@@ -277,7 +277,7 @@ function ContactForm() {
                                     <div className="min-w-0">
                                         <h3 className="font-black text-base text-gray-900 mb-1">Address</h3>
                                         <p className="text-sm text-gray-700 font-medium">6a Old Market Place,</p>
-                                        <p className="text-sm text-gray-700 font-medium">Altrincham WA14 4NP</p>
+                                        <p className="text-sm text-gray-700 font-medium">Altrincham WA14 5NP</p>
                                     </div>
                                 </div>
 
@@ -296,14 +296,14 @@ function ContactForm() {
                         {/* add proper address in map when it is provided */}
                         <div className="bg-white rounded-3xl overflow-hidden shadow-2xl border-2 border-[#e8dfd3] h-72 sm:h-80">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2379.454205953763!2d-2.3528021228294445!3d53.38881447230164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487baca2a15d0107%3A0x478749c4bc33255e!2s6a%20Old%20Market%20Pl%2C%20Altrincham%20WA14%204NP%2C%20UK!5e0!3m2!1sen!2sae!4v1770097182986!5m2!1sen!2sae"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2379.454205953763!2d-2.3528021228294445!3d53.38881447230164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487baca2a15d0107%3A0x478749c4bc33255e!2s6a%20Old%20Market%20Pl%2C%20Altrincham%20WA14%205NP%2C%20UK!5e0!3m2!1sen!2sae!4v1770097182986!5m2!1sen!2sae"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
                                 allowFullScreen
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
-                                title="6a Old Market Place Altrincham WA14 4NP"
+                                title="6a Old Market Place Altrincham WA14 5NP"
                             />
                         </div>
                     </div>
