@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Star, ChevronLeft, ChevronRight, PawPrint, ShoppingBag, Heart } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PawPrint, ShoppingBag } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { fetchAllProducts } from '../slices/productsSlice';
@@ -123,11 +123,6 @@ export default function PopularProducts() {
                                     {/* Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#6b5d52]/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                                    {/* Heart Icon - Top Right */}
-                                    <div className="absolute top-3 right-3 w-8 h-8 sm:w-9 sm:h-9 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-[#e8dfd3] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#9b8d7f] group-hover:fill-[#9b8d7f] transition-all" />
-                                    </div>
-
                                     {/* Price Badge */}
                                     <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-xl border border-[#918172]">
                                         <div className="flex flex-col">
@@ -145,14 +140,14 @@ export default function PopularProducts() {
                                     </div>
 
                                     {/* Rating Badge */}
-                                    {product.rating > 0 && (
+                                    {/* {product.rating > 0 && (
                                         <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1.5 shadow-lg border border-[#918172] flex items-center gap-1">
                                             <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#9b8d7f] text-[#9b8d7f]" />
                                             <span className="text-xs sm:text-sm font-bold text-gray-900">
                                                 {product.rating.toFixed(1)}
                                             </span>
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 {/* Content */}

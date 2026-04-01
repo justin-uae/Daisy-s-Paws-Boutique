@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CheckCircle, Check, ChevronUp, ChevronDown, HelpCircle, Star, Package, PawPrint, ShoppingCart, Ruler, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle, Check, ChevronUp, ChevronDown, HelpCircle, Package, PawPrint, ShoppingCart, Ruler, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { fetchProductById } from '../slices/productsSlice';
@@ -320,8 +320,8 @@ Thank you! 🐶`;
                                                 key={index}
                                                 onClick={() => setSelectedImageIndex(index)}
                                                 className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden transition-all border-2 ${selectedImageIndex === index
-                                                        ? 'border-[#8B5A3C] ring-2 ring-[#8B5A3C] ring-offset-2'
-                                                        : 'border-gray-200 hover:border-gray-300'
+                                                    ? 'border-[#8B5A3C] ring-2 ring-[#8B5A3C] ring-offset-2'
+                                                    : 'border-gray-200 hover:border-gray-300'
                                                     }`}
                                             >
                                                 <img
@@ -350,7 +350,7 @@ Thank you! 🐶`;
                                                 <span className="truncate font-semibold">{selectedProduct.category}</span>
                                             </div>
                                         )}
-                                        {selectedProduct.rating > 0 && (
+                                        {/* {selectedProduct.rating > 0 && (
                                             <div className="flex items-center gap-1.5 sm:gap-2">
                                                 <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#8B5A3C] text-[#8B5A3C] flex-shrink-0" />
                                                 <span className="font-bold text-[#5D4037]">
@@ -360,7 +360,7 @@ Thank you! 🐶`;
                                                     <span className="truncate font-medium">({selectedProduct.reviewsCount} reviews)</span>
                                                 )}
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>
@@ -580,8 +580,8 @@ Thank you! 🐶`;
                                                             setSelectedImageIndex(index);
                                                         }}
                                                         className={`relative flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden transition-all border-2 ${selectedImageIndex === index
-                                                                ? 'border-white ring-2 ring-white scale-110'
-                                                                : 'border-transparent hover:border-white/50'
+                                                            ? 'border-white ring-2 ring-white scale-110'
+                                                            : 'border-transparent hover:border-white/50'
                                                             }`}
                                                     >
                                                         <img
@@ -850,7 +850,7 @@ Thank you! 🐶`;
                             </div>
 
                             {/* Trust Badge */}
-                            {selectedProduct.rating > 0 && (
+                            {/* {selectedProduct.rating > 0 && (
                                 <div className="mt-4 sm:mt-6 bg-gradient-to-br from-[#EBEAE9] to-[#DED8D6] rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-[#D4A798] sm:border-2 shadow-lg">
                                     <div className="text-center">
                                         <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-[#8B5A3C] to-[#6D4C41] bg-clip-text text-transparent mb-1.5 sm:mb-2">
@@ -871,7 +871,7 @@ Thank you! 🐶`;
                                         )}
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
